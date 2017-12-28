@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 /**
  * Created by bvn13 on 28.12.2017.
  */
-public class Application {
+public class DialogApplication {
 
     public static class DialogFSM extends FSM {
         public String command;
