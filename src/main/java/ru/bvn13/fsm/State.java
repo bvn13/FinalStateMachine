@@ -9,8 +9,11 @@ public class State implements StateBehaviour {
     private boolean finish;
 
     private FSM fsm;
-    public void setFSM(FSM fsm) {
+    protected void setFSM(FSM fsm) {
         this.fsm = fsm;
+    }
+    public FSM getFSM() {
+        return this.fsm;
     }
 
     public State(String name) {

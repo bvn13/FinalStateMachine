@@ -9,6 +9,9 @@ public class Condition implements ConditionBehaviour {
     protected void setFSM(FSM fsm) {
         this.fsm = fsm;
     }
+    public FSM getFSM() {
+        return this.fsm;
+    }
 
     @Override
     public boolean check() {

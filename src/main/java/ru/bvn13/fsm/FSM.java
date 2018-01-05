@@ -15,6 +15,7 @@ public class FSM {
     private boolean done = false;
     private State initialState;
     private State currentState;
+    private State previousState;
     private Map<String, State> states;
     private Map<String, Map<String, ConditionBehaviour>> transitions;
 
@@ -35,6 +36,7 @@ public class FSM {
             throw new NotInitedException();
         }
         done = false;
+        previousState = null;
         currentState.beforeEvent();
         currentState.process();
     }
@@ -43,6 +45,9 @@ public class FSM {
         return currentState;
     }
 
+    public State getPreviousState() {
+        return previousState;
+    }
 
     public void next() throws FSMException {
         if (done) {
@@ -77,6 +82,7 @@ public class FSM {
 
     private void nextState(State state) {
         state.beforeEvent();
+        previousState = currentState;
         currentState = state;
         currentState.process();
     }
@@ -89,6 +95,7 @@ public class FSM {
 
     public void addState(State state) throws FSMException {
         checkStateExist(state.getName());
+        state.setFSM(this);
         this.states.put(state.getName(), state);
     }
 
