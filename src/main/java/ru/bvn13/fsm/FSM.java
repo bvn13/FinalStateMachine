@@ -80,6 +80,17 @@ public class FSM {
         nextState(nextState);
     }
 
+    public void prev() throws FSMException {
+        if (done) {
+            return;
+        }
+        currentState.afterEvent();
+        if (getPreviousState() == null) {
+            return;
+        }
+        nextState(getPreviousState());
+    }
+
     private void nextState(State state) {
         state.beforeEvent();
         previousState = currentState;
