@@ -18,8 +18,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 }
 
-group = 'ru.bvn13'
-artifact = 'fsm'
+group = 'ru.bvn13.fsm'
 version = '1.0'
 description = 'FinalStateMachine'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
