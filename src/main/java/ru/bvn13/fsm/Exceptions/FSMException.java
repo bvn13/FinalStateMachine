@@ -6,7 +6,7 @@ import java.io.StringWriter;
 /**
  * Created by bvn13 on 28.12.2017.
  */
-public class FSMException extends Exception {
+public class FSMException extends RuntimeException {
     protected String message;
     public FSMException(String message) {
         this.message = message;

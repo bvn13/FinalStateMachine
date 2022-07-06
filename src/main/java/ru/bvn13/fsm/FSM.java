@@ -16,18 +16,12 @@ public class FSM {
     private State initialState;
     private State currentState;
     private State previousState;
-    private Map<String, State> states;
-    private Map<String, Map<String, ConditionBehaviour>> transitions;
+    private final Map<String, State> states;
+    private final Map<String, Map<String, ConditionBehaviour>> transitions;
 
     public FSM() {
         this.states = new HashMap<>();
         this.transitions = new HashMap<>();
-    }
-
-    private void checkStateExist(String name) throws StateExistsException {
-        if (this.states.containsKey(name)) {
-            throw new StateExistsException(name);
-        }
     }
 
     public void init() throws NotInitedException {
@@ -91,13 +85,6 @@ public class FSM {
         nextState(getPreviousState());
     }
 
-    private void nextState(State state) {
-        state.beforeEvent();
-        previousState = currentState;
-        currentState = state;
-        currentState.process();
-    }
-
     public void initState(State state) throws FSMException {
         state.setFSM(this);
         addState(state);
@@ -127,6 +114,19 @@ public class FSM {
     public void addTransition(String fromState, State toState, Condition condition) throws FSMException {
         addState(toState);
         addTransition(fromState, toState.getName(), condition);
+    }
+
+    private void nextState(State state) {
+        state.beforeEvent();
+        previousState = currentState;
+        currentState = state;
+        currentState.process();
+    }
+
+    private void checkStateExist(String name) throws StateExistsException {
+        if (this.states.containsKey(name)) {
+            throw new StateExistsException(name);
+        }
     }
 
     private void storeTransition(String fromState, String toState, Condition condition) throws FSMException {
