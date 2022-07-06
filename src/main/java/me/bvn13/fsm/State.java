@@ -1,18 +1,18 @@
-package ru.bvn13.fsm;
+package me.bvn13.fsm;
 
 /**
  * Created by bvn13 on 28.12.2017.
  */
-public class State implements StateBehaviour {
+public class State<E> implements StateBehaviour<E> {
 
-    private String name;
+    private final String name;
     private boolean finish;
 
-    private FSM fsm;
-    protected void setFSM(FSM fsm) {
+    private Fsm fsm;
+    protected void setFSM(Fsm fsm) {
         this.fsm = fsm;
     }
-    public FSM getFSM() {
+    public Fsm getFSM() {
         return this.fsm;
     }
 

@@ -1,14 +1,14 @@
-package ru.bvn13.fsm.Exceptions;
+package me.bvn13.fsm.exceptions;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Created by bvn13 on 28.12.2017.
+ * Parent FSM exception class
  */
-public class FSMException extends RuntimeException {
+public class FsmException extends RuntimeException {
     protected String message;
-    public FSMException(String message) {
+    public FsmException(String message) {
         this.message = message;
     }
     protected String getStackTraceString() {

@@ -1,11 +1,11 @@
-package ru.bvn13.fsm.Exceptions;
+package me.bvn13.fsm.exceptions;
 
 import java.util.List;
 
 /**
- * Created by bvn13 on 28.12.2017.
+ * is thrown if there are more than 1 appropriate transition from current state
  */
-public class AmbiguousTransitionException extends FSMException {
+public class AmbiguousTransitionException extends FsmException {
     public AmbiguousTransitionException(String message) {
         super(message);
     }
