@@ -47,7 +47,6 @@ Simple way to use it - to construct an inherited class specified with the type o
       .checking((fsm, event) -> true)
     .end()
     .create();
-  }
 ```
 
 ## Releasing

@@ -72,7 +72,6 @@ import java.util.function.Supplier;
  *      .checking((fsm, event) -> true)
  *    .end()
  *    .create();
- *  }
  * </pre>
  *
  * {@link SimpleFsm}
