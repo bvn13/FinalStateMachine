@@ -38,7 +38,7 @@ import java.util.function.Supplier;
  * </p>
  *
  * <p>
- *  Transition is the Rule provides FSM the possibility to change between states.
+ *  Transition is the Rule providing FSM the possibility to change between states.
  *
  *  Each transition must be determined in terms of:
  *  <ol>
