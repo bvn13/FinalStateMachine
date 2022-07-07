@@ -17,6 +17,7 @@ import java.util.function.Supplier;
  * <p>
  * <b>Final State Machine</b>
  * </p>
+ *
  * <p>
  * Each state machine must be prepared with:
  *  <ol>
@@ -25,7 +26,6 @@ import java.util.function.Supplier;
  *      <li>Intermediate states - optionally</li>
  *      <li>All transitions needed</li>
  *  </ol>
- * </p>
  *
  * <p>
  *  Each {@link State} may be specified with handlers:
@@ -34,7 +34,6 @@ import java.util.function.Supplier;
  *      <li>After handler - is called right before FSM changes FROM this state to another</li>
  *      <li>Processor - the method to process events</li>
  *  </ol>
- * </p>
  *
  * <p>
  *  Transition is the Rule providing FSM the possibility to change between states.
@@ -46,12 +45,10 @@ import java.util.function.Supplier;
  *      <li>Condition - optionally. If specified, the FSM will check the condition in order to check the possibility
  *      to change from FROM State into TO State</li>
  *  </ol>
- * </p>
  *
  * <p>
  * Simple way to use it - to construct an inherited class specified with the type of events to be processed
  * during transitions.
- * </p>
  *
  * <pre>
  *  {@code
@@ -79,35 +76,29 @@ import java.util.function.Supplier;
  *
  * <p>
  * Otherwise you are able to use Old syntax:
- * </p>
  *
  * <pre>
- *  {@code
  *  NamedFsm namedFsm = new NamedFsm().setName("TEST FSM");
- *  namedFsm.initState(new State<String>("init") {
- *      @Override
+ *  namedFsm.initState(new State&#60;String&#62;("init") {
  *      public void process(String event) {
  *          initStatedProcessed.set(true);
  *      }
  *  });
  *
- *  namedFsm.addTransition("init", new State<String>("first", true) {
- *      @Override
+ *  namedFsm.addTransition("init", new State&#60;String&#62;("first", true) {
  *      public void process(String event) {
  *          firstStatedProcessed.set(true);
  *      }
  *  });
  *
- *  namedFsm.addTransition("init", new State<String>("another", true) {
- *      @Override
+ *  namedFsm.addTransition("init", new State&#60;String&#62;("another", true) {
  *      public void process(String event) {
  *          anotherStatedProcessed.set(true);
  *      }
- *  }, (fsm, event) -> false);
+ *  }, (fsm, event) -&#62; false);
  *
  *  namedFsm.init();
- *  }
- * </pre> *
+ * </pre>
  * {@link SimpleFsm}
  */
 public class Fsm<T extends Fsm, E> {
