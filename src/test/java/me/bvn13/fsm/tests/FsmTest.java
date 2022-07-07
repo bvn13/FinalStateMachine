@@ -64,6 +64,7 @@ public class FsmTest {
 
         namedFsm.init();
         namedFsm.process(null);
+        namedFsm.process(null);
 
         Assert.assertEquals("first", namedFsm.getCurrentState().getName());
         Assert.assertTrue(initStatedProcessed.get());
