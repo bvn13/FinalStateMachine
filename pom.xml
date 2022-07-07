@@ -31,9 +31,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Versions -->
-        <nexus.url>https://s01.oss.sonatype.org</nexus.url>
-
         <!-- Publishing -->
         <nexus.url>https://s01.oss.sonatype.org</nexus.url>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
