@@ -114,6 +114,26 @@ public class Fsm<T extends Fsm, E> {
     }
 
     /**
+     * Main method to handle every event
+     *
+     * @param event event
+     * @throws FsmException
+     */
+    @SuppressWarnings("unchecked")
+    public void process(E event) throws FsmException {
+        if (done) {
+            return;
+        }
+        currentState.process(event);
+        currentState.afterEvent();
+        if (currentState.isFinish()) {
+            done = true;
+            return;
+        }
+        switchToNextState(event);
+    }
+
+    /**
      * Returns current state
      *
      * @return {@link State}
@@ -129,44 +149,6 @@ public class Fsm<T extends Fsm, E> {
      */
     public State<E> getPreviousState() {
         return previousState;
-    }
-
-    /**
-     * Main method to handle every event
-     *
-     * @param event event
-     * @throws FsmException
-     */
-    @SuppressWarnings("unchecked")
-    public void process(E event) throws FsmException {
-        if (done) {
-            return;
-        }
-        currentState.afterEvent();
-        if (currentState.isFinish()) {
-            done = true;
-            return;
-        }
-        if (!transitions.containsKey(currentState.getName())) {
-            throw new TransitionMissedException(currentState.getName());
-        }
-        Map<String, Condition<T,E>> conditions = transitions.get(currentState.getName());
-        List<String> nextStates = new ArrayList<>();
-        for (String key : conditions.keySet()) {
-            if (conditions.get(key) == null) {
-                nextStates.add(key);
-            } else if(conditions.get(key).check((T) this, event)) {
-                nextStates.add(key);
-            }
-        }
-        if (nextStates.size() > 1) {
-            throw new AmbiguousTransitionException(currentState.getName(), nextStates);
-        }
-        if (nextStates.size() == 0) {
-            throw new BrokenTransitionException(currentState.getName());
-        }
-        State<E> nextState = states.get(nextStates.get(0));
-        nextState(nextState, event);
     }
 
     /**
@@ -241,11 +223,33 @@ public class Fsm<T extends Fsm, E> {
         addTransition(fromState, toState.getName(), condition);
     }
 
+    private void switchToNextState(E event) {
+        if (!transitions.containsKey(currentState.getName())) {
+            throw new TransitionMissedException(currentState.getName());
+        }
+        Map<String, Condition<T,E>> conditions = transitions.get(currentState.getName());
+        List<String> nextStates = new ArrayList<>();
+        for (String key : conditions.keySet()) {
+            if (conditions.get(key) == null) {
+                nextStates.add(key);
+            } else if(conditions.get(key).check((T) this, event)) {
+                nextStates.add(key);
+            }
+        }
+        if (nextStates.size() > 1) {
+            throw new AmbiguousTransitionException(currentState.getName(), nextStates);
+        }
+        if (nextStates.size() == 0) {
+            throw new BrokenTransitionException(currentState.getName());
+        }
+        State<E> nextState = states.get(nextStates.get(0));
+        nextState(nextState, event);
+    }
+
     private void nextState(State<E> state, E event) {
         state.beforeEvent();
         previousState = currentState;
         currentState = state;
-        currentState.process(event);
     }
 
     private void checkStateExist(String name) throws StateAlreadyExistsException {

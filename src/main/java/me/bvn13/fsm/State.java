@@ -32,4 +32,8 @@ public class State<E> implements StateBehaviour<E> {
         return finish;
     }
 
+    public String toString() {
+        return name;
+    }
+
 }
