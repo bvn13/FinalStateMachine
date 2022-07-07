@@ -3,7 +3,6 @@ package me.bvn13.fsm;
 import me.bvn13.fsm.exceptions.AmbiguousTransitionException;
 import me.bvn13.fsm.exceptions.BrokenTransitionException;
 import me.bvn13.fsm.exceptions.ConditionAlreadyExistsException;
-import me.bvn13.fsm.exceptions.FsmException;
 import me.bvn13.fsm.exceptions.NotInitializedException;
 import me.bvn13.fsm.exceptions.StateAlreadyExistsException;
 import me.bvn13.fsm.exceptions.TransitionMissedException;
@@ -16,11 +15,11 @@ import java.util.function.Supplier;
 
 /**
  * <p>
- *  <b>Final State Machine</b><br/>
+ * <b>Final State Machine</b>
  * </p>
  * <p>
+ * Each state machine must be prepared with:
  *  <ol>
- *      Each state machine must be prepared with:
  *      <li>Initial state</li>
  *      <li>Finish state - may be not several states</li>
  *      <li>Intermediate states - optionally</li>
@@ -29,8 +28,8 @@ import java.util.function.Supplier;
  * </p>
  *
  * <p>
+ *  Each {@link State} may be specified with handlers:
  *  <ol>
- *      Each {@link State} may be specified with handlers:
  *      <li>Before handler - is called right before FSM changes INTO this state</li>
  *      <li>After handler - is called right before FSM changes FROM this state to another</li>
  *      <li>Processor - the method to process events</li>
@@ -39,7 +38,7 @@ import java.util.function.Supplier;
  *
  * <p>
  *  Transition is the Rule providing FSM the possibility to change between states.
- *
+ * <p>
  *  Each transition must be determined in terms of:
  *  <ol>
  *      <li>From State - mandatory</li>
@@ -49,9 +48,11 @@ import java.util.function.Supplier;
  *  </ol>
  * </p>
  *
- *
+ * <p>
  * Simple way to use it - to construct an inherited class specified with the type of events to be processed
  * during transitions.
+ * </p>
+ *
  * <pre>
  *  {@code
  *  SimpleFsm<String> simpleFsm = Fsm
@@ -73,8 +74,40 @@ import java.util.function.Supplier;
  *      .checking((fsm, event) -> true)
  *    .end()
  *    .create();
+ *  }
  * </pre>
  *
+ * <p>
+ * Otherwise you are able to use Old syntax:
+ * </p>
+ *
+ * <pre>
+ *  {@code
+ *  NamedFsm namedFsm = new NamedFsm().setName("TEST FSM");
+ *  namedFsm.initState(new State<String>("init") {
+ *      @Override
+ *      public void process(String event) {
+ *          initStatedProcessed.set(true);
+ *      }
+ *  });
+ *
+ *  namedFsm.addTransition("init", new State<String>("first", true) {
+ *      @Override
+ *      public void process(String event) {
+ *          firstStatedProcessed.set(true);
+ *      }
+ *  });
+ *
+ *  namedFsm.addTransition("init", new State<String>("another", true) {
+ *      @Override
+ *      public void process(String event) {
+ *          anotherStatedProcessed.set(true);
+ *      }
+ *  }, (fsm, event) -> false);
+ *
+ *  namedFsm.init();
+ *  }
+ * </pre> *
  * {@link SimpleFsm}
  */
 public class Fsm<T extends Fsm, E> {
@@ -83,27 +116,26 @@ public class Fsm<T extends Fsm, E> {
     private State<E> initialState;
     private State<E> currentState;
     private State<E> previousState;
-    private final Map<String, State<E>> states  = new HashMap<>();
-    private final Map<String, Map<String, Condition<T,E>>> transitions = new HashMap<>();
+    private final Map<String, State<E>> states = new HashMap<>();
+    private final Map<String, Map<String, Condition<T, E>>> transitions = new HashMap<>();
 
     /**
      * Initiate a builder
      *
      * @param supplier the original FSM inherited class constructor. You may specify '{@code () -> new SimpleFsm()}' in parameter
+     * @param <T>      the original FSM inherited class type
+     * @param <E>      the class type of Events to be processed
      * @return FsmBuilder
-     * @param <T> the original FSM inherited class type
-     * @param <E> the class type of Events to be processed
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Fsm,E> FsmBuilderInitializer<T,E> from(Supplier<T> supplier) {
+    public static <T extends Fsm, E> FsmBuilderInitializer<T, E> from(Supplier<T> supplier) {
         return new FsmBuilderInitializer<>(supplier);
     }
 
     /**
      * To initialize FSM into initial state
-     * @throws NotInitializedException
      */
-    public void init() throws NotInitializedException {
+    public void init() {
         currentState = initialState;
         if (currentState == null) {
             throw new NotInitializedException();
@@ -117,10 +149,9 @@ public class Fsm<T extends Fsm, E> {
      * Main method to handle every event
      *
      * @param event event
-     * @throws FsmException
      */
     @SuppressWarnings("unchecked")
-    public void process(E event) throws FsmException {
+    public void process(E event) {
         if (done) {
             return;
         }
@@ -155,9 +186,8 @@ public class Fsm<T extends Fsm, E> {
      * To specify initial state
      *
      * @param state {@link State}
-     * @throws FsmException
      */
-    public void initState(State<E> state) throws FsmException {
+    public void initState(State<E> state) {
         state.setFSM(this);
         addState(state);
         initialState = state;
@@ -167,9 +197,8 @@ public class Fsm<T extends Fsm, E> {
      * To add another state
      *
      * @param state {@link State}
-     * @throws FsmException
      */
-    public void addState(State<E> state) throws FsmException {
+    public void addState(State<E> state) {
         checkStateExist(state.getName());
         state.setFSM(this);
         this.states.put(state.getName(), state);
@@ -179,10 +208,9 @@ public class Fsm<T extends Fsm, E> {
      * To set the transition up
      *
      * @param fromState {@link State}
-     * @param toState {@link State}
-     * @throws FsmException
+     * @param toState   {@link State}
      */
-    public void addTransition(String fromState, String toState) throws FsmException {
+    public void addTransition(String fromState, String toState) {
         storeTransition(fromState, toState, null);
     }
 
@@ -190,11 +218,10 @@ public class Fsm<T extends Fsm, E> {
      * To set the transition up
      *
      * @param fromState {@link State}
-     * @param toState {@link State}
+     * @param toState   {@link State}
      * @param condition {@link Condition}
-     * @throws FsmException
      */
-    public void addTransition(String fromState, String toState, Condition<T,E> condition) throws FsmException {
+    public void addTransition(String fromState, String toState, Condition<T, E> condition) {
         storeTransition(fromState, toState, condition);
     }
 
@@ -202,10 +229,9 @@ public class Fsm<T extends Fsm, E> {
      * To set the transition up
      *
      * @param fromState {@link State}
-     * @param toState {@link State}
-     * @throws FsmException
+     * @param toState   {@link State}
      */
-    public void addTransition(String fromState, State<E> toState) throws FsmException {
+    public void addTransition(String fromState, State<E> toState) {
         addState(toState);
         addTransition(fromState, toState.getName());
     }
@@ -214,11 +240,10 @@ public class Fsm<T extends Fsm, E> {
      * To set the transition up
      *
      * @param fromState {@link State}
-     * @param toState {@link State}
+     * @param toState   {@link State}
      * @param condition {@link Condition}
-     * @throws FsmException
      */
-    public void addTransition(String fromState, State<E> toState, Condition<T,E> condition) throws FsmException {
+    public void addTransition(String fromState, State<E> toState, Condition<T, E> condition) {
         addState(toState);
         addTransition(fromState, toState.getName(), condition);
     }
@@ -227,12 +252,12 @@ public class Fsm<T extends Fsm, E> {
         if (!transitions.containsKey(currentState.getName())) {
             throw new TransitionMissedException(currentState.getName());
         }
-        Map<String, Condition<T,E>> conditions = transitions.get(currentState.getName());
+        Map<String, Condition<T, E>> conditions = transitions.get(currentState.getName());
         List<String> nextStates = new ArrayList<>();
         for (String key : conditions.keySet()) {
             if (conditions.get(key) == null) {
                 nextStates.add(key);
-            } else if(conditions.get(key).check((T) this, event)) {
+            } else if (conditions.get(key).check((T) this, event)) {
                 nextStates.add(key);
             }
         }
@@ -258,7 +283,7 @@ public class Fsm<T extends Fsm, E> {
         }
     }
 
-    private void storeTransition(String fromState, String toState, Condition<T,E> condition) throws FsmException {
+    private void storeTransition(String fromState, String toState, Condition<T, E> condition) {
         if (!transitions.containsKey(fromState)) {
             transitions.put(fromState, new HashMap<>());
         }
