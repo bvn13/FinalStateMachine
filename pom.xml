@@ -7,7 +7,7 @@
 
     <groupId>me.bvn13</groupId>
     <artifactId>fsm</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.2-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
