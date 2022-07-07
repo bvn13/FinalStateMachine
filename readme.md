@@ -29,8 +29,9 @@ Simple way to use it - to construct an inherited class specified with the type o
  during transitions.
 
 ```java
-  SimpleFsm<String> simpleFsm = SimpleFsm
-    .<SimpleFsm<String>, String>withStates(SimpleFsm::new)
+  SimpleFsm<String> simpleFsm = Fsm
+    .<SimpleFsm<String>, String>from(SimpleFsm::new)
+    .withStates()
       .from("init")
       .withBeforeHandler(fsm -> initBefore.set(true))
       .withAfterHandler(fsm -> initAfter.set(true))

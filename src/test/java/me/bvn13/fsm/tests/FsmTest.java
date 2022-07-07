@@ -1,11 +1,8 @@
 package me.bvn13.fsm.tests;
 
-import me.bvn13.fsm.ConditionBuilder;
 import me.bvn13.fsm.Fsm;
-import me.bvn13.fsm.FsmBuilder;
 import me.bvn13.fsm.SimpleFsm;
 import me.bvn13.fsm.State;
-import me.bvn13.fsm.StateBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -86,8 +83,9 @@ public class FsmTest {
 
         // @formatter:off
 
-        SimpleFsm<String> simpleFsm = SimpleFsm
-                .<SimpleFsm<String>, String>withStates(SimpleFsm::new)
+        SimpleFsm<String> simpleFsm = Fsm
+                .<SimpleFsm<String>, String>from(SimpleFsm::new)
+                .withStates()
                 .from("init")
                     .withBeforeHandler(fsm -> initBefore.set(true))
                     .withAfterHandler(fsm -> initAfter.set(true))

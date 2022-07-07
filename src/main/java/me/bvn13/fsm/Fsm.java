@@ -54,8 +54,9 @@ import java.util.function.Supplier;
  * during transitions.
  * <pre>
  *  {@code
- *  SimpleFsm<String> simpleFsm = SimpleFsm
- *    .<SimpleFsm<String>, String>withStates(SimpleFsm::new)
+ *  SimpleFsm<String> simpleFsm = Fsm
+ *    .<SimpleFsm<String>, String>from(SimpleFsm::new)
+ *    .withStates()
  *      .from("init")
  *      .withBeforeHandler(fsm -> initBefore.set(true))
  *      .withAfterHandler(fsm -> initAfter.set(true))
@@ -94,8 +95,8 @@ public class Fsm<T extends Fsm, E> {
      * @param <E> the class type of Events to be processed
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Fsm,E> FsmBuilder<T,E> withStates(Supplier<T> supplier) {
-        return new FsmBuilder<>(supplier);
+    public static <T extends Fsm,E> FsmBuilderInitializer<T,E> from(Supplier<T> supplier) {
+        return new FsmBuilderInitializer<>(supplier);
     }
 
     /**
