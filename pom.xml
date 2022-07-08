@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>me.bvn13</groupId>
+    <groupId>me.bvn13.fsm</groupId>
     <artifactId>fsm</artifactId>
     <version>2.1.4-SNAPSHOT</version>
 
