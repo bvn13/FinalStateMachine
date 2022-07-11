@@ -8,6 +8,6 @@ package me.bvn13.fsm;
 @FunctionalInterface
 public interface StateProcessor<T extends Fsm, E> {
 
-    void process(T fms, E event);
+    void process(T fsm, E event);
 
 }
