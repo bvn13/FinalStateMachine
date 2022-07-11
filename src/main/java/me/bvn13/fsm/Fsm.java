@@ -103,10 +103,10 @@ import java.util.function.Supplier;
  */
 public class Fsm<T extends Fsm, E> {
 
-    private boolean done = false;
-    private State<E> initialState;
-    private State<E> currentState;
-    private State<E> previousState;
+    protected boolean done = false;
+    protected State<E> initialState;
+    protected State<E> currentState;
+    protected State<E> previousState;
     private final Map<String, State<E>> states = new HashMap<>();
     private final Map<String, Map<String, Condition<T, E>>> transitions = new HashMap<>();
 
