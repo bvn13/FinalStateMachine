@@ -107,8 +107,8 @@ public class Fsm<T extends Fsm, E> {
     protected State<E> initialState;
     protected State<E> currentState;
     protected State<E> previousState;
-    private final Map<String, State<E>> states = new HashMap<>();
-    private final Map<String, Map<String, Condition<T, E>>> transitions = new HashMap<>();
+    protected final Map<String, State<E>> states = new HashMap<>();
+    protected final Map<String, Map<String, Condition<T, E>>> transitions = new HashMap<>();
 
     /**
      * Initiate a builder
