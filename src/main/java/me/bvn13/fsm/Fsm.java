@@ -263,9 +263,9 @@ public class Fsm<T extends Fsm, E> {
     }
 
     private void nextState(State<E> state, E event) {
-        state.beforeEvent();
         previousState = currentState;
         currentState = state;
+        currentState.beforeEvent();
     }
 
     private void checkStateExist(String name) throws StateAlreadyExistsException {
