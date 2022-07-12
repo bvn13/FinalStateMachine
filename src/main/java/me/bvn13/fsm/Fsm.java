@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static java.lang.String.format;
+
 /**
  * <p>
  * <b>Final State Machine</b>
@@ -237,6 +239,20 @@ public class Fsm<T extends Fsm, E> {
     public void addTransition(String fromState, State<E> toState, Condition<T, E> condition) {
         addState(toState);
         addTransition(fromState, toState.getName(), condition);
+    }
+
+    /**
+     * Provides a possibility to initialize FSM in custom State
+     * @param name State name (must be added before)
+     */
+    protected void setCurrentState(String name) {
+        try {
+            this.currentState = this.states.get(name);
+        } catch (NullPointerException e) {
+            throw new NotInitializedException(format("Unable to find state '%s'", name), e);
+        }
+        this.done = currentState.isFinish();
+        this.currentState.beforeEvent();
     }
 
     private void switchToNextState(E event) {

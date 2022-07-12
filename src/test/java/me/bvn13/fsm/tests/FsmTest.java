@@ -109,11 +109,9 @@ public class FsmTest {
                     .to("finish")
                     .checking((fsm, event) -> true)
                 .end()
-                .create()
-                ;
+                .create();
 
         // @formatter:on
-
         simpleFsm.process("");
         simpleFsm.process("");
 
@@ -121,6 +119,69 @@ public class FsmTest {
         Assert.assertTrue(initBefore.get());
         Assert.assertTrue(initProcess.get());
         Assert.assertTrue(initAfter.get());
+        Assert.assertTrue(finishBefore.get());
+        Assert.assertFalse(finishProcess.get());
+        Assert.assertFalse(finishAfter.get());
+
+    }
+
+    @Test
+    public void newSyntaxCustomState() {
+
+        AtomicBoolean initBefore = new AtomicBoolean(false);
+        AtomicBoolean initAfter = new AtomicBoolean(false);
+        AtomicBoolean initProcess = new AtomicBoolean(false);
+        AtomicBoolean intermediateBefore = new AtomicBoolean(false);
+        AtomicBoolean intermediateAfter = new AtomicBoolean(false);
+        AtomicBoolean intermediateProcess = new AtomicBoolean(false);
+        AtomicBoolean finishBefore = new AtomicBoolean(false);
+        AtomicBoolean finishAfter = new AtomicBoolean(false);
+        AtomicBoolean finishProcess = new AtomicBoolean(false);
+
+        // @formatter:off
+
+        SimpleFsm<String> simpleFsm = Fsm
+                .<SimpleFsm<String>, String>from(SimpleFsm::new)
+                .withStates()
+                .from("init")
+                    .withBeforeHandler(fsm -> initBefore.set(true))
+                    .withAfterHandler(fsm -> initAfter.set(true))
+                    .withProcessor((fsm, event) -> initProcess.set(true))
+                .end()
+                .state("intermediate")
+                    .withBeforeHandler(fsm -> intermediateBefore.set(true))
+                    .withAfterHandler(fsm -> intermediateAfter.set(true))
+                    .withProcessor((fsm, event) -> intermediateProcess.set(true))
+                .end()
+                .finish("finish")
+                    .withBeforeHandler(fsm -> finishBefore.set(true))
+                    .withAfterHandler(fsm -> finishAfter.set(true))
+                    .withProcessor((fsm, event) -> finishProcess.set(true))
+                .end()
+                .withTransition()
+                    .from("init")
+                    .to("intermediate")
+                    .checking((fsm, event) -> true)
+                .end()
+                .withTransition()
+                    .from("intermediate")
+                    .to("finish")
+                    .checking((fsm, event) -> true)
+                .end()
+                .startingAt("intermediate")
+                ;
+
+        // @formatter:on
+
+        simpleFsm.process("");
+
+        Assert.assertEquals("finish", simpleFsm.getCurrentState().getName());
+        Assert.assertFalse(initBefore.get());
+        Assert.assertFalse(initProcess.get());
+        Assert.assertFalse(initAfter.get());
+        Assert.assertTrue(intermediateBefore.get());
+        Assert.assertTrue(intermediateAfter.get());
+        Assert.assertTrue(intermediateProcess.get());
         Assert.assertTrue(finishBefore.get());
         Assert.assertFalse(finishProcess.get());
         Assert.assertFalse(finishAfter.get());
