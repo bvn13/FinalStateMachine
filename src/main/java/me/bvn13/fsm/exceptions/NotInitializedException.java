@@ -7,7 +7,12 @@ public class NotInitializedException extends FsmException {
     public NotInitializedException(String message) {
         super(message);
     }
+
+    public NotInitializedException(String message, Exception e) {
+        super(message, e);
+    }
+
     public NotInitializedException() {
-        super("FSM is not inited");
+        super("FSM is not initialized");
     }
 }

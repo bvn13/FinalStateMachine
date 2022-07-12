@@ -5,7 +5,7 @@ import me.bvn13.fsm.StateHandler;
 
 public class DummyHandler<T extends Fsm> implements StateHandler<T> {
     @Override
-    public void handle(T fms) {
+    public void handle(T fsm) {
 
     }
 }

@@ -2,6 +2,8 @@ package me.bvn13.fsm.exceptions;
 
 import java.util.List;
 
+import static java.lang.String.format;
+
 /**
  * is thrown if there are more than 1 appropriate transition from current state
  */
@@ -10,11 +12,14 @@ public class AmbiguousTransitionException extends FsmException {
         super(message);
     }
     public AmbiguousTransitionException(String from, List<String> next) {
-        super("");
-        String msg = "";
-        for (String to : next) {
-            msg += (msg.length() > 0 ? ", " : "") + to;
+        super(format("Ambiguous transition from state %s. Candidates are: %s", from, join(next)));
+    }
+
+    private static String join(List<String> list) {
+        StringBuilder msg = new StringBuilder();
+        for (String to : list) {
+            msg.append(msg.length() > 0 ? ", " : "").append(to);
         }
-        this.message = String.format("Ambiguous transition from state %s. Candidates are: %s", from, msg);
+        return msg.toString();
     }
 }

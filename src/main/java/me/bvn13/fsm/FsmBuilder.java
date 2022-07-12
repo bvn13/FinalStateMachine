@@ -31,6 +31,11 @@ public class FsmBuilder<T extends Fsm, E> {
         return fsm;
     }
 
+    public T startingAt(String name) {
+        fsm.setCurrentState(name);
+        return fsm;
+    }
+
     T getFsm() {
         return fsm;
     }

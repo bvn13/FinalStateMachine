@@ -5,7 +5,7 @@ import me.bvn13.fsm.StateProcessor;
 
 public class DummyProcessor<T extends Fsm,E> implements StateProcessor<T,E> {
     @Override
-    public void process(T fms, E event) {
+    public void process(T fsm, E event) {
 
     }
 }

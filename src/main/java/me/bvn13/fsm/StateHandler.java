@@ -7,6 +7,6 @@ package me.bvn13.fsm;
 @FunctionalInterface
 public interface StateHandler<T extends Fsm> {
 
-    void handle(T fms);
+    void handle(T fsm);
 
 }
