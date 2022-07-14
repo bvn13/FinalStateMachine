@@ -149,7 +149,7 @@ public class FsmTest {
                     .withAfterHandler(fsm -> initAfter.set(true))
                     .withProcessor((fsm, event) -> initProcess.set(true))
                 .end()
-                .state("intermediate-1")
+                .state("intermediate")
                     .withBeforeHandler(fsm -> intermediateBefore.set(true))
                     .withAfterHandler(fsm -> intermediateAfter.set(true))
                     .withProcessor((fsm, event) -> intermediateProcess.set(true))
@@ -161,11 +161,11 @@ public class FsmTest {
                 .end()
                 .withTransition()
                     .from("init")
-                    .to("intermediate-1")
+                    .to("intermediate")
                     .checking((fsm, event) -> true)
                 .end()
                 .withTransition()
-                    .from("intermediate-1")
+                    .from("intermediate")
                     .to("finish")
                     .checking((fsm, event) -> true)
                 .end()
@@ -180,7 +180,7 @@ public class FsmTest {
         Assert.assertFalse(initBefore.get());
         Assert.assertFalse(initProcess.get());
         Assert.assertFalse(initAfter.get());
-        Assert.assertTrue(intermediateBefore.get());
+        Assert.assertFalse(intermediateBefore.get());
         Assert.assertTrue(intermediateAfter.get());
         Assert.assertTrue(intermediateProcess.get());
         Assert.assertTrue(finishBefore.get());
