@@ -149,9 +149,9 @@ public class Fsm<T extends Fsm, E> {
             return;
         }
         currentState.process(event);
-        currentState.afterEvent();
         if (currentState.isFinish()) {
             done = true;
+            currentState.afterEvent();
             return;
         }
         switchToNextState(event);
@@ -278,6 +278,7 @@ public class Fsm<T extends Fsm, E> {
     }
 
     private void nextState(State<E> state, E event) {
+        currentState.afterEvent();
         previousState = currentState;
         currentState = state;
         currentState.beforeEvent();
