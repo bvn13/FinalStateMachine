@@ -56,4 +56,8 @@ public class StateBuilder<T extends Fsm, E> {
         return this;
     }
 
+    public ConditionBuilder<T,E> withTransition() {
+        return new ConditionBuilder<>(fsmBuilder, this, name);
+    }
+
 }
