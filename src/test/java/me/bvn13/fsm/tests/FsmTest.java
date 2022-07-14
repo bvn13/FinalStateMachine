@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by bvn13 on 28.12.2017.
@@ -179,13 +180,92 @@ public class FsmTest {
         Assert.assertFalse(initBefore.get());
         Assert.assertFalse(initProcess.get());
         Assert.assertFalse(initAfter.get());
-        Assert.assertTrue(intermediateBefore.get());
+        Assert.assertFalse(intermediateBefore.get());
         Assert.assertTrue(intermediateAfter.get());
         Assert.assertTrue(intermediateProcess.get());
         Assert.assertTrue(finishBefore.get());
         Assert.assertFalse(finishProcess.get());
         Assert.assertFalse(finishAfter.get());
 
+    }
+
+    @Test
+    public void newSyntaxCountingEveryStep() {
+
+        Counter initCounter = new Counter();
+        Counter firstIntermediateCounter = new Counter();
+        Counter secondIntermediateCounter = new Counter();
+        Counter finishCounter = new Counter();
+
+        // @formatter:off
+
+        SimpleFsm<String> simpleFsm = Fsm
+                .<SimpleFsm<String>, String>from(SimpleFsm::new)
+                .withStates()
+                    .from("init")
+                        .withBeforeHandler(fsm -> initCounter.before.incrementAndGet())
+                        .withAfterHandler(fsm -> initCounter.after.incrementAndGet())
+                        .withProcessor((fsm, event) -> initCounter.process.incrementAndGet())
+                    .end()
+                    .state("intermediate-1")
+                        .withBeforeHandler(fsm -> firstIntermediateCounter.before.incrementAndGet())
+                        .withAfterHandler(fsm -> firstIntermediateCounter.after.incrementAndGet())
+                        .withProcessor((fsm, event) -> firstIntermediateCounter.process.incrementAndGet())
+                    .end()
+                    .state("intermediate-2")
+                        .withBeforeHandler(fsm -> secondIntermediateCounter.before.incrementAndGet())
+                        .withAfterHandler(fsm -> secondIntermediateCounter.after.incrementAndGet())
+                        .withProcessor((fsm, event) -> secondIntermediateCounter.process.incrementAndGet())
+                    .end()
+                    .finish("finish")
+                        .withBeforeHandler(fsm -> finishCounter.before.incrementAndGet())
+                        .withAfterHandler(fsm -> finishCounter.after.incrementAndGet())
+                        .withProcessor((fsm, event) -> finishCounter.process.incrementAndGet())
+                    .end()
+                .withTransition()
+                    .from("init")
+                    .to("intermediate-1")
+                    .checking((fsm, event) -> true)
+                .end()
+                .withTransition()
+                    .from("intermediate-1")
+                    .to("intermediate-2")
+                    .checking((fsm, event) -> true)
+                .end()
+                .withTransition()
+                    .from("intermediate-2")
+                    .to("finish")
+                    .checking((fsm, event) -> true)
+                .end()
+                .create()
+                ;
+
+        // @formatter:on
+
+        simpleFsm.process("");
+        simpleFsm.process("");
+        simpleFsm.process("");
+
+        Assert.assertEquals("finish", simpleFsm.getCurrentState().getName());
+        Assert.assertEquals(1, initCounter.before.get());
+        Assert.assertEquals(1, initCounter.after.get());
+        Assert.assertEquals(1, initCounter.process.get());
+        Assert.assertEquals(1, firstIntermediateCounter.before.get());
+        Assert.assertEquals(1, firstIntermediateCounter.after.get());
+        Assert.assertEquals(1, firstIntermediateCounter.process.get());
+        Assert.assertEquals(1, secondIntermediateCounter.before.get());
+        Assert.assertEquals(1, secondIntermediateCounter.after.get());
+        Assert.assertEquals(1, secondIntermediateCounter.process.get());
+        Assert.assertEquals(1, finishCounter.before.get());
+        Assert.assertEquals(0, finishCounter.after.get());
+        Assert.assertEquals(0, finishCounter.process.get());
+
+    }
+
+    static class Counter {
+        final AtomicInteger before = new AtomicInteger(0);
+        final AtomicInteger after = new AtomicInteger(0);
+        final AtomicInteger process = new AtomicInteger(0);
     }
 
 }

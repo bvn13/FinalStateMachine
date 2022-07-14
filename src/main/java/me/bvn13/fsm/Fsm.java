@@ -252,7 +252,6 @@ public class Fsm<T extends Fsm, E> {
             throw new NotInitializedException(format("Unable to find state '%s'", name), e);
         }
         this.done = currentState.isFinish();
-        this.currentState.beforeEvent();
     }
 
     private void switchToNextState(E event) {
