@@ -262,6 +262,78 @@ public class FsmTest {
 
     }
 
+    @Test
+    public void newSyntaxOfTransitions() {
+
+        Counter initCounter = new Counter();
+        Counter firstIntermediateCounter = new Counter();
+        Counter secondIntermediateCounter = new Counter();
+        Counter finishCounter = new Counter();
+
+        // @formatter:off
+
+        SimpleFsm<String> simpleFsm = Fsm
+                .<SimpleFsm<String>, String>from(SimpleFsm::new)
+                .withStates()
+                    .from("init")
+                        .withBeforeHandler(fsm -> initCounter.before.incrementAndGet())
+                        .withProcessor((fsm, event) -> initCounter.process.incrementAndGet())
+                        .withAfterHandler(fsm -> initCounter.after.incrementAndGet())
+                        .withTransition()
+                            .to("intermediate-1")
+                            .checking((fsm, event) -> true)
+                        .endTransition()
+                    .end()
+                    .state("intermediate-1")
+                        .withBeforeHandler(fsm -> firstIntermediateCounter.before.incrementAndGet())
+                        .withProcessor((fsm, event) -> firstIntermediateCounter.process.incrementAndGet())
+                        .withAfterHandler(fsm -> firstIntermediateCounter.after.incrementAndGet())
+                        .withTransition()
+                            .from("intermediate-1")
+                            .to("intermediate-2")
+                            .checking((fsm, event) -> true)
+                        .endTransition()
+                    .end()
+                    .state("intermediate-2")
+                        .withBeforeHandler(fsm -> secondIntermediateCounter.before.incrementAndGet())
+                        .withProcessor((fsm, event) -> secondIntermediateCounter.process.incrementAndGet())
+                        .withAfterHandler(fsm -> secondIntermediateCounter.after.incrementAndGet())
+                    .end()
+                    .finish("finish")
+                        .withBeforeHandler(fsm -> finishCounter.before.incrementAndGet())
+                        .withProcessor((fsm, event) -> finishCounter.process.incrementAndGet())
+                        .withAfterHandler(fsm -> finishCounter.after.incrementAndGet())
+                        .withTransition()
+                            .from("intermediate-2")
+                            .to("finish")
+                            .checking((fsm, event) -> true)
+                        .endTransition()
+                    .end()
+                .create()
+                ;
+
+        // @formatter:on
+
+        simpleFsm.process("");
+        simpleFsm.process("");
+        simpleFsm.process("");
+
+        Assert.assertEquals("finish", simpleFsm.getCurrentState().getName());
+        Assert.assertEquals(1, initCounter.before.get());
+        Assert.assertEquals(1, initCounter.after.get());
+        Assert.assertEquals(1, initCounter.process.get());
+        Assert.assertEquals(1, firstIntermediateCounter.before.get());
+        Assert.assertEquals(1, firstIntermediateCounter.after.get());
+        Assert.assertEquals(1, firstIntermediateCounter.process.get());
+        Assert.assertEquals(1, secondIntermediateCounter.before.get());
+        Assert.assertEquals(1, secondIntermediateCounter.after.get());
+        Assert.assertEquals(1, secondIntermediateCounter.process.get());
+        Assert.assertEquals(1, finishCounter.before.get());
+        Assert.assertEquals(0, finishCounter.after.get());
+        Assert.assertEquals(0, finishCounter.process.get());
+
+    }
+
     static class Counter {
         final AtomicInteger before = new AtomicInteger(0);
         final AtomicInteger after = new AtomicInteger(0);

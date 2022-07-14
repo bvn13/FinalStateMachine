@@ -50,6 +50,31 @@ Simple way to use it - to construct an inherited class specified with the type o
     .create();
 ```
 
+or since 2.2.1
+
+```java
+  SimpleFsm<String> simpleFsm = Fsm
+    .<SimpleFsm<String>, String>from(SimpleFsm::new)
+    .withStates()
+      .from("init")
+      .withBeforeHandler(fsm -> initBefore.set(true))
+      .withAfterHandler(fsm -> initAfter.set(true))
+      .withProcessor((fsm, event) -> initProcess.set(true))
+      .withTransition()
+        .to("finish")
+        .checking((fsm, event) -> true)
+      .endTransition()
+    .end()
+    .finish("finish")
+      .withBeforeHandler(fsm -> finishBefore.set(true))
+      .withAfterHandler(fsm -> finishAfter.set(true))
+      .withProcessor((fsm, event) -> finishProcess.set(true))
+    .end()
+    .create();
+  }
+
+```
+
 ## Releasing
 
 Creating a new release involves the following steps:

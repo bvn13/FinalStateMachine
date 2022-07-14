@@ -52,6 +52,8 @@ import static java.lang.String.format;
  * Simple way to use it - to construct an inherited class specified with the type of events to be processed
  * during transitions.
  *
+ * since 2.1.5
+ *
  * <pre>
  *  {@code
  *  SimpleFsm<String> simpleFsm = Fsm
@@ -71,6 +73,31 @@ import static java.lang.String.format;
  *      .from("init")
  *      .to("finish")
  *      .checking((fsm, event) -> true)
+ *    .end()
+ *    .create();
+ *  }
+ * </pre>
+ *
+ * or since 2.2.1
+ *
+ * <pre>
+ *  {@code
+ *  SimpleFsm<String> simpleFsm = Fsm
+ *    .<SimpleFsm<String>, String>from(SimpleFsm::new)
+ *    .withStates()
+ *      .from("init")
+ *      .withBeforeHandler(fsm -> initBefore.set(true))
+ *      .withAfterHandler(fsm -> initAfter.set(true))
+ *      .withProcessor((fsm, event) -> initProcess.set(true))
+ *      .withTransition()
+ *        .to("finish")
+ *        .checking((fsm, event) -> true)
+ *      .endTransition()
+ *    .end()
+ *    .finish("finish")
+ *      .withBeforeHandler(fsm -> finishBefore.set(true))
+ *      .withAfterHandler(fsm -> finishAfter.set(true))
+ *      .withProcessor((fsm, event) -> finishProcess.set(true))
  *    .end()
  *    .create();
  *  }
